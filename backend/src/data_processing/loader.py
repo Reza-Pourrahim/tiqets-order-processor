@@ -1,7 +1,9 @@
-import pandas as pd
-from pathlib import Path
 import logging
-from .validator import orders_schema, barcodes_schema
+from pathlib import Path
+
+import pandas as pd
+
+from .validator import barcodes_schema, orders_schema
 
 
 class DataLoader:

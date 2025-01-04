@@ -1,7 +1,8 @@
-from src.data_processing.processor import OrderProcessor
-from src.utils.logger import setup_logger
 import signal
 import sys
+
+from src.data_processing.processor import OrderProcessor
+from src.utils.logger import setup_logger
 
 
 def signal_handler(sig, frame):
