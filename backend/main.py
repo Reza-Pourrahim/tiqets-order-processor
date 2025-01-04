@@ -31,8 +31,8 @@ def main():
             print(f"Customer {customer_id}: {ticket_count}")
 
         # get unused barcodes count
-        unused_count = processor.get_unused_barcodes(result_df)
-        print(f"\n#Unused barcodes: {unused_count}")
+        unused_count, _ = processor.get_unused_barcodes(result_df)
+        print(f"\nUnused barcodes: {unused_count}")
 
         # save results
         processor.save_results(result_df)

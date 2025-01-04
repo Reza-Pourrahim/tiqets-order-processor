@@ -132,7 +132,8 @@ class OrderProcessor:
         """
         try:
             barcodes_df = self.loader.load_barcodes()
-            return barcodes_df["order_id"].isna().sum()
+            unused_barcodes = barcodes_df[barcodes_df["order_id"].isna()]
+            return unused_barcodes.shape[0], unused_barcodes
         except Exception as e:
             self.logger.error(f"Error counting unused barcodes: {str(e)}")
             raise
