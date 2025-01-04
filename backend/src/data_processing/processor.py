@@ -7,7 +7,7 @@ from .loader import DataLoader
 
 class OrderProcessor:
     def __init__(self, logger: logging.Logger, output_dir: str = "data/output"):
-        self.loader = DataLoader()
+        self.loader = DataLoader(logger=logger)
         self.output_dir = Path(output_dir)
         # create output directory and any missing parent dirs
         self.output_dir.mkdir(parents=True, exist_ok=True)
