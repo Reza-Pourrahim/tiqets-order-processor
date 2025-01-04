@@ -121,21 +121,24 @@ class OrderProcessor:
             self.logger.error(f"Error calculating top customers: {str(e)}")
             raise
 
-    def get_unused_barcodes(self, df: pd.DataFrame) -> int:
-        """Count unused barcodes.
+    def get_unused_barcodes(self, df: pd.DataFrame) -> Tuple[int, pd.DataFrame]:
+        """Get count and details of unused barcodes.
 
         Args:
             df (pd.DataFrame): Processed data
 
         Returns:
-            int: Number of unused barcodes
+            Tuple[int, pd.DataFrame]: Count of unused barcodes and their details
+
+        Raises:
+            Exception: If error occurs while processing barcodes
         """
         try:
             barcodes_df = self.loader.load_barcodes()
             unused_barcodes = barcodes_df[barcodes_df["order_id"].isna()]
             return unused_barcodes.shape[0], unused_barcodes
         except Exception as e:
-            self.logger.error(f"Error counting unused barcodes: {str(e)}")
+            self.logger.error(f"Error processing unused barcodes: {str(e)}")
             raise
 
     def save_results(self, df: pd.DataFrame) -> None:
