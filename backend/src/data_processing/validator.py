@@ -8,18 +8,18 @@ import pandera as pa
 orders_schema = pa.DataFrameSchema(
     {
         "order_id": pa.Column(
-            int, 
+            int,
             unique=True,
             coerce=True,  # Convert to integer if needed
-            description="Unique identifier for each order"
+            description="Unique identifier for each order",
         ),
         "customer_id": pa.Column(
             int,
             coerce=True,  # Convert to integer if needed
-            description="Customer identifier - can have multiple orders"
-        )
+            description="Customer identifier - can have multiple orders",
+        ),
     },
-    strict=True  # Ensure no unexpected columns
+    strict=True,  # Ensure no unexpected columns
 )
 
 # Schema for validating barcodes data
@@ -29,14 +29,14 @@ barcodes_schema = pa.DataFrameSchema(
             int,
             unique=True,
             coerce=True,  # Convert to integer if needed
-            description="Unique identifier for each ticket"
+            description="Unique identifier for each ticket",
         ),
         "order_id": pa.Column(
             float,
             nullable=True,
             coerce=True,  # Convert to float if needed
-            description="Order ID if barcode is sold, null if unused"
-        )
+            description="Order ID if barcode is sold, null if unused",
+        ),
     },
-    strict=True  # Ensure no unexpected columns
+    strict=True,  # Ensure no unexpected columns
 )
