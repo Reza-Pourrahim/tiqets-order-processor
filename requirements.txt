@@ -1,3 +1,10 @@
 numpy>=1.24.0
 pandas>=2.1.0
 pandera>=0.17.2
+
+# Flask dependencies
+flask==3.0.1
+flask-sqlalchemy==3.1.1
+flask-migrate==4.0.5
+flask-cors==4.0.0
+python-dotenv==1.0.0
