@@ -2,12 +2,25 @@ from functools import lru_cache
 from http import HTTPStatus
 from typing import Any, Dict, Tuple
 
+from app.schemas.schemas import (
+    CustomerOrderQuerySchema,
+    OrderSchema,
+    TopCustomerSchema,
+    UnusedBarcodeSchema,
+)
 from flask import Blueprint, current_app, jsonify, request
+from marshmallow import ValidationError
 from src.data_processing.processor import OrderProcessor
 from src.utils.logger import setup_logger
 
 bp = Blueprint("api", __name__)
 logger = setup_logger()
+
+# Initialize schemas
+order_schema = OrderSchema()
+customer_query_schema = CustomerOrderQuerySchema()
+top_customer_schema = TopCustomerSchema(many=True)
+unused_barcode_schema = UnusedBarcodeSchema()
 
 
 def error_response(message: str, status_code: int) -> Tuple[Dict[str, Any], int]:
@@ -75,19 +88,43 @@ def process_orders():
         processor.save_results(result_df)
         processor.save_to_database(result_df)
 
+        # Prepare orders data
+        orders_data = [
+            {
+                "customer_id": int(row["customer_id"]),
+                "order_id": int(row["order_id"]),
+                "barcodes": [int(b) for b in row["barcode"]],
+            }
+            for _, row in result_df.iterrows()
+        ]
+
+        # Prepare analytics data
+        analytics_data = {
+            "top_customers": [
+                {"customer_id": int(cust_id), "ticket_count": int(count)}
+                for cust_id, count in top_customers
+            ],
+            "unused_barcodes": {
+                "count": int(unused_count),
+                "barcodes": [
+                    {"barcode": int(row["barcode"]), "order_id": None}
+                    for _, row in unused_barcodes_df.iterrows()
+                ],
+            },
+        }
+
+        # Validate and serialize with schemas
         response = {
             "status": "success",
             "data": {
-                "orders": result_df.to_dict(orient="records"),
+                "orders": order_schema.dump(orders_data, many=True),
                 "analytics": {
-                    "top_customers": [
-                        {"customer_id": int(cust_id), "ticket_count": int(count)}
-                        for cust_id, count in top_customers
-                    ],
-                    "unused_barcodes": {
-                        "count": int(unused_count),
-                        "details": unused_barcodes_df.to_dict(orient="records"),
-                    },
+                    "top_customers": top_customer_schema.dump(
+                        analytics_data["top_customers"]
+                    ),
+                    "unused_barcodes": unused_barcode_schema.dump(
+                        analytics_data["unused_barcodes"]
+                    ),
                 },
             },
         }
@@ -126,30 +163,26 @@ def get_top_customers():
         500: Internal Server Error - Processing failed
     """
     try:
-        limit = request.args.get("limit", default=5, type=int)
-        if limit <= 0:
-            return error_response(
-                "Limit must be a positive integer", HTTPStatus.BAD_REQUEST
-            )
+        # Validate query parameters using schema
+        params = customer_query_schema.load(request.args)
 
         result_df = get_processed_data()
         processor = OrderProcessor(logger)
-        top_customers = processor.get_top_customers(result_df, limit=limit)
+        top_customers = processor.get_top_customers(result_df, limit=params["limit"])
 
-        response = {
-            "status": "success",
-            "data": [
-                {"customer_id": int(cust_id), "ticket_count": int(count)}
-                for cust_id, count in top_customers
-            ],
-        }
+        # Prepare data for schema
+        data = [
+            {"customer_id": int(cust_id), "ticket_count": int(count)}
+            for cust_id, count in top_customers
+        ]
 
-        return jsonify(response), HTTPStatus.OK
+        # Validate and serialize with schema
+        result = top_customer_schema.dump(data)
 
-    except ValueError as ve:
-        return error_response(
-            f"Invalid limit parameter: {str(ve)}", HTTPStatus.BAD_REQUEST
-        )
+        return jsonify({"status": "success", "data": result}), HTTPStatus.OK
+
+    except ValidationError as err:
+        return error_response(str(err.messages), HTTPStatus.BAD_REQUEST)
     except Exception as e:
         logger.error(f"Error getting top customers: {str(e)}")
         return error_response(str(e), HTTPStatus.INTERNAL_SERVER_ERROR)
@@ -187,15 +220,19 @@ def get_unused_barcodes():
         processor = OrderProcessor(logger)
         unused_count, unused_barcodes_df = processor.get_unused_barcodes(result_df)
 
-        response = {
-            "status": "success",
-            "data": {
-                "count": int(unused_count),
-                "barcodes": unused_barcodes_df.to_dict(orient="records"),
-            },
+        # Prepare data for schema
+        data = {
+            "count": int(unused_count),
+            "barcodes": [
+                {"barcode": int(row["barcode"]), "order_id": None}
+                for _, row in unused_barcodes_df.iterrows()
+            ],
         }
 
-        return jsonify(response), HTTPStatus.OK
+        # Validate and serialize with schema
+        result = unused_barcode_schema.dump(data)
+
+        return jsonify({"status": "success", "data": result}), HTTPStatus.OK
 
     except Exception as e:
         logger.error(f"Error getting unused barcodes: {str(e)}")
@@ -238,12 +275,20 @@ def get_customer_orders(customer_id):
                 f"No orders found for customer {customer_id}", HTTPStatus.NOT_FOUND
             )
 
-        return (
-            jsonify(
-                {"status": "success", "data": customer_orders.to_dict(orient="records")}
-            ),
-            HTTPStatus.OK,
-        )
+        # Convert DataFrame to format matching schema
+        orders_data = [
+            {
+                "customer_id": int(row["customer_id"]),
+                "order_id": int(row["order_id"]),
+                "barcodes": [int(b) for b in row["barcode"]],
+            }
+            for _, row in customer_orders.iterrows()
+        ]
+
+        # Validate and serialize with schema
+        result = order_schema.dump(orders_data, many=True)
+
+        return jsonify({"status": "success", "data": result}), HTTPStatus.OK
 
     except Exception as e:
         logger.error(f"Error getting customer orders: {str(e)}")
