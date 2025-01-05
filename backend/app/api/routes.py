@@ -71,6 +71,10 @@ def process_orders():
         top_customers = processor.get_top_customers(result_df)
         unused_count, unused_barcodes_df = processor.get_unused_barcodes(result_df)
 
+        # Save both to CSV and database
+        processor.save_results(result_df)
+        processor.save_to_database(result_df)
+
         response = {
             "status": "success",
             "data": {

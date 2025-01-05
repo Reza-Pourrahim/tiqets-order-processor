@@ -3,6 +3,8 @@ from pathlib import Path
 from typing import List, Tuple
 
 import pandas as pd
+from app import db
+from app.models.models import Barcode, Customer, Order
 
 from .loader import DataLoader
 
@@ -39,13 +41,24 @@ class OrderProcessor:
             orders_df = self.loader.load_orders()
             barcodes_df = self.loader.load_barcodes()
 
+            # Add validation
+            if orders_df.empty or barcodes_df.empty:
+                raise ValueError("Empty input data")
+
             valid_orders_df = self._validate_orders_barcodes(orders_df, barcodes_df)
             result = self._merge_orders_barcodes(valid_orders_df, barcodes_df)
+
+            # Validate result
+            if result.empty:
+                raise ValueError("No valid orders found after processing")
 
             return result
 
         except FileNotFoundError as e:
             self.logger.error(f"Input file not found: {str(e)}")
+            raise
+        except ValueError as e:
+            self.logger.error(f"Validation error: {str(e)}")
             raise
         except Exception as e:
             self.logger.error(f"Error processing data: {str(e)}")
@@ -160,4 +173,42 @@ class OrderProcessor:
             self.logger.info(f"Results saved to {output_path}")
         except Exception as e:
             self.logger.error(f"Error saving results: {str(e)}")
+            raise
+
+    def save_to_database(self, result_df: pd.DataFrame) -> None:
+        try:
+            self.logger.info("Saving data to database...")
+            for _, row in result_df.iterrows():
+                # Check if customer exists
+                customer = Customer.query.get(row["customer_id"])
+                if not customer:
+                    customer = Customer(id=row["customer_id"])
+                    db.session.add(customer)
+
+                # Create order
+                order = Order(customer_id=customer.id)
+                db.session.add(order)
+
+                # Create barcodes - check for existing ones
+                for barcode_value in row["barcode"]:
+                    # Check if barcode already exists
+                    existing_barcode = Barcode.query.filter_by(
+                        barcode_value=str(barcode_value)
+                    ).first()
+
+                    if not existing_barcode:
+                        barcode = Barcode(
+                            barcode_value=str(barcode_value), order_id=order.id
+                        )
+                        db.session.add(barcode)
+                    else:
+                        self.logger.warning(
+                            f"Barcode {barcode_value} already exists, skipping..."
+                        )
+
+                db.session.commit()
+
+        except Exception as e:
+            db.session.rollback()
+            self.logger.error(f"Error saving to database: {str(e)}")
             raise
