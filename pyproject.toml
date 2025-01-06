@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "tiqets-order-processor"
+version = "0.1.0"
+description = "Order Processing API for Tiqets Ticketing System"
+authors = ["reza.prh <rezaprh.pourrahim@gmail.com>"]
+readme = "README.md"
+packages = [
+    {include = "backend/app"},
+    {include = "backend/src"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+flask = "3.0.0"
+flask-cors = "4.0.0"
+flask-sqlalchemy = "3.1.1"
+flask-marshmallow = "0.15.0"
+marshmallow = "3.20.1"
+marshmallow-sqlalchemy = "0.29.0"
+sqlalchemy = "2.0.23"
+psycopg2-binary = "2.9.9"
+alembic = "1.13.1"
+pandas = "2.1.4"
+multimethod = "1.9.1"
+pandera = "0.17.2"
+pytest = "7.4.3"
+pytest-cov = "4.1.0"
+python-dotenv = "1.0.0"
+black = "23.12.1"
+flake8 = "6.1.0"
+python-dateutil = "2.8.2"
+typing-extensions = "4.9.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
