@@ -1,5 +1,6 @@
 from functools import lru_cache
 from http import HTTPStatus
+from pathlib import Path
 from typing import Any, Dict, Tuple
 
 from app.schemas.schemas import (
@@ -38,13 +39,23 @@ def error_response(message: str, status_code: int) -> Tuple[Dict[str, Any], int]
 
 # Add lru_cache(Least Recently Used Cache) to cache processed data
 @lru_cache(maxsize=1)
-def get_processed_data():
+def get_processed_data(input_dir: str, output_dir: str):
     """Cache and return processed data.
+
+    Args:
+        input_dir (str): Input directory path
+        output_dir (str): Output directory path
 
     Returns:
         pd.DataFrame: Processed order data
     """
-    processor = OrderProcessor(logger)
+    processor = OrderProcessor(
+        logger=logger, input_dir=input_dir, output_dir=output_dir
+    )
+
+    # Set the input directory for the loader
+    processor.loader.input_dir = Path(input_dir)
+
     return processor.process()
 
 
@@ -77,53 +88,56 @@ def process_orders():
         500: Internal Server Error - Processing failed
     """
     try:
-        result_df = get_processed_data()
+        # Get paths from config
+        input_dir = str(current_app.config["INPUT_DIR"])
+        output_dir = str(current_app.config["OUTPUT_DIR"])
 
-        # Get analytics
-        processor = OrderProcessor(logger)
-        top_customers = processor.get_top_customers(result_df)
-        unused_count, unused_barcodes_df = processor.get_unused_barcodes(result_df)
+        # Use cached data processing
+        result_df = get_processed_data(input_dir, output_dir)
+
+        # Create processor for operations
+        processor = OrderProcessor(
+            logger=logger, input_dir=input_dir, output_dir=output_dir
+        )
 
         # Save both to CSV and database
         processor.save_results(result_df)
         processor.save_to_database(result_df)
 
-        # Prepare orders data
-        orders_data = [
-            {
-                "customer_id": int(row["customer_id"]),
-                "order_id": int(row["order_id"]),
-                "barcodes": [int(b) for b in row["barcode"]],
-            }
-            for _, row in result_df.iterrows()
-        ]
+        # Get analytics
+        top_customers = processor.get_top_customers(result_df)
+        unused_count, unused_barcodes_df = processor.get_unused_barcodes(result_df)
 
-        # Prepare analytics data
-        analytics_data = {
-            "top_customers": [
-                {"customer_id": int(cust_id), "ticket_count": int(count)}
-                for cust_id, count in top_customers
-            ],
-            "unused_barcodes": {
-                "count": int(unused_count),
-                "barcodes": [
-                    {"barcode": int(row["barcode"]), "order_id": None}
-                    for _, row in unused_barcodes_df.iterrows()
-                ],
-            },
-        }
-
-        # Validate and serialize with schemas
+        # Prepare response data
         response = {
             "status": "success",
             "data": {
-                "orders": order_schema.dump(orders_data, many=True),
+                "orders": order_schema.dump(
+                    [
+                        {
+                            "customer_id": int(row["customer_id"]),
+                            "order_id": int(row["order_id"]),
+                            "barcodes": [int(b) for b in row["barcode"]],
+                        }
+                        for _, row in result_df.iterrows()
+                    ],
+                    many=True,
+                ),
                 "analytics": {
                     "top_customers": top_customer_schema.dump(
-                        analytics_data["top_customers"]
+                        [
+                            {"customer_id": int(cust_id), "ticket_count": int(count)}
+                            for cust_id, count in top_customers
+                        ]
                     ),
                     "unused_barcodes": unused_barcode_schema.dump(
-                        analytics_data["unused_barcodes"]
+                        {
+                            "count": int(unused_count),
+                            "barcodes": [
+                                {"barcode": int(row["barcode"]), "order_id": None}
+                                for _, row in unused_barcodes_df.iterrows()
+                            ],
+                        }
                     ),
                 },
             },
@@ -163,21 +177,22 @@ def get_top_customers():
         500: Internal Server Error - Processing failed
     """
     try:
-        # Validate query parameters using schema
         params = customer_query_schema.load(request.args)
+        input_dir = str(current_app.config["INPUT_DIR"])
+        output_dir = str(current_app.config["OUTPUT_DIR"])
 
-        result_df = get_processed_data()
-        processor = OrderProcessor(logger)
+        result_df = get_processed_data(input_dir, output_dir)
+        processor = OrderProcessor(
+            logger=logger, input_dir=input_dir, output_dir=output_dir
+        )
         top_customers = processor.get_top_customers(result_df, limit=params["limit"])
 
-        # Prepare data for schema
-        data = [
-            {"customer_id": int(cust_id), "ticket_count": int(count)}
-            for cust_id, count in top_customers
-        ]
-
-        # Validate and serialize with schema
-        result = top_customer_schema.dump(data)
+        result = top_customer_schema.dump(
+            [
+                {"customer_id": int(cust_id), "ticket_count": int(count)}
+                for cust_id, count in top_customers
+            ]
+        )
 
         return jsonify({"status": "success", "data": result}), HTTPStatus.OK
 
@@ -216,7 +231,10 @@ def get_unused_barcodes():
         500: Internal Server Error - Processing failed
     """
     try:
-        result_df = get_processed_data()
+        input_dir = str(current_app.config["INPUT_DIR"])
+        output_dir = str(current_app.config["OUTPUT_DIR"])
+
+        result_df = get_processed_data(input_dir, output_dir)
         processor = OrderProcessor(logger)
         unused_count, unused_barcodes_df = processor.get_unused_barcodes(result_df)
 
@@ -267,7 +285,10 @@ def get_customer_orders(customer_id):
         500: Internal Server Error - Processing failed
     """
     try:
-        result_df = get_processed_data()
+        input_dir = str(current_app.config["INPUT_DIR"])
+        output_dir = str(current_app.config["OUTPUT_DIR"])
+
+        result_df = get_processed_data(input_dir, output_dir)
         customer_orders = result_df[result_df["customer_id"] == customer_id]
 
         if customer_orders.empty:

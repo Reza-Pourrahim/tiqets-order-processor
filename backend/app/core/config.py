@@ -3,8 +3,8 @@ from pathlib import Path
 
 
 class Config:
-    # Base directory of the application
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    # Base directory of the application (points to tiqets_order_processor/)
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
     # Flask
     SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-key"

@@ -12,12 +12,15 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Extensions
+    app.config["INPUT_DIR"].mkdir(parents=True, exist_ok=True)
+    app.config["OUTPUT_DIR"].mkdir(parents=True, exist_ok=True)
+
+    # Initialize extensions
     db.init_app(app)
     ma.init_app(app)
     CORS(app)
 
-    # Blueprints
+    # Register blueprints
     from app.api.routes import bp as api_bp
 
     app.register_blueprint(api_bp, url_prefix="/api")

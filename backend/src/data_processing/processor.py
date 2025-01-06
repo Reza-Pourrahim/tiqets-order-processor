@@ -10,14 +10,21 @@ from .loader import DataLoader
 
 
 class OrderProcessor:
-    def __init__(self, logger: logging.Logger, output_dir: str = "data/output"):
+    def __init__(
+        self,
+        logger: logging.Logger,
+        input_dir: str = "data/input",
+        output_dir: str = "data/output",
+    ):
         """Initialize OrderProcessor.
 
         Args:
             logger (logging.Logger): Logger instance
-            output_dir (str): Directory for output files
+            input_dir (str, optional): Directory for input files
+            output_dir (str, optional): Directory for output files
         """
         self.loader = DataLoader(logger=logger)
+        self.input_dir = Path(input_dir)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.logger = logger
