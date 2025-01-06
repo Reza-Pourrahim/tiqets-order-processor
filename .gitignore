@@ -173,7 +173,3 @@ cython_debug/
 # Logs
 logs/
 *.log
-
-# Data
-data/output/*
-!data/output/.gitkeep
