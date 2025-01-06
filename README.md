@@ -11,6 +11,7 @@ The Tiqets Order Processor is a full-stack application for managing customers, o
 3. [Testing Guide](docs/testing_guide.md)
 4. [Development and Deployment Instructions](docs/dev_and_deployment.md)
 5. [Data Validation and Flow](#data-validation-and-flow)
+6. [CLI Tool for Data Processing](#cli-tool-for-data-processing)
 
 ---
 
@@ -124,25 +125,53 @@ The data flow within the Tiqets Order Processor is as follows:
    - Data is visualized through a React-based dashboard, providing real-time insights into the system.
 
 ---
+## CLI Tool for Data Processing
 
-### **API Flow**
-The API flow ensures seamless communication between the frontend and backend:
-1. **Frontend Requests**:
-   - The React frontend uses Axios to send HTTP requests to the Flask backend.
+A standalone CLI tool is available for batch data processing and debugging. It processes input data, performs analytics, and saves the results for further use.
 
-2. **Backend Processing**:
-   - The backend validates incoming requests using Marshmallow.
-   - Processes the requested data or analytics using Pandas and SQLAlchemy.
-   - Returns structured JSON responses to the frontend.
+### **Usage**
+Run the script directly to process data, generate analytics, and save the results:
+```bash
+poetry shell
+python backend/tools/main.py
+```
 
-3. **Error Handling**:
-   - Errors are handled gracefully with clear messages and HTTP status codes:
-     - `400 Bad Request` for invalid input data.
-     - `404 Not Found` for missing resources.
-     - `500 Internal Server Error` for unexpected issues.
+### **Features**
+- **Data Processing**:
+  - Processes raw order and barcode data from CSV files.
+  - Handles duplicate barcodes and identifies orders without barcodes.
+- **Analytics Generation**:
+  - Identifies the top 5 customers by ticket count.
+  - Counts and lists unused barcodes in the system.
+- **Result Storage**:
+  - Saves the processed orders and analytics to the `data/output/processed_orders.csv` file.
 
-4. **Frontend Updates**:
-   - The React frontend dynamically updates its dashboard based on the backend’s responses.
+### **Sample Output**
+Here’s an example of the tool’s output:
+```plaintext
+2025-01-06 23:42:36,926 - INFO - Starting order processing...
+2025-01-06 23:42:36,937 - WARNING - Found 5 duplicate barcodes:
+531    11111111649
+547    11111111665
+...
+2025-01-06 23:42:36,942 - ERROR - Found 3 orders without barcodes: [75, 108, 201]
+
+Top 5 customers by number of tickets:
+Customer 10: 23
+Customer 56: 20
+...
+
+Unused barcodes: 98
+2025-01-06 23:42:36,962 - INFO - Results saved to data/output/processed_orders.csv
+2025-01-06 23:42:36,962 - INFO - Processing completed successfully
+```
+
+### **Interrupt Handling**
+The script gracefully handles `Ctrl+C` interruptions, ensuring no partial or corrupt data is saved during processing.
+
+### **Error Reporting**
+- **Duplicate Barcodes**: The tool logs duplicate barcodes and retains the first occurrence.
+- **Orders Without Barcodes**: It identifies and logs orders missing associated barcodes.
 
 ---
 
@@ -160,17 +189,18 @@ tiqets-order-processor/
 ├── backend/                 # Main backend code
 │   ├── app/                 # Flask app
 │   ├── src/                 # Data processing logic
-│   ├── tests/              # Unit and integration tests
-│   └── migrations/         # Database migration scripts
-├── frontend/               # React frontend application
-│   ├── src/               # Frontend source code
-│   │   ├── components/    # Reusable React components
-│   │   ├── pages/        # Page components
-│   │   └── services/     # API integration services
-│   └── public/           # Static assets
-├── data/                  # Input/output data
-├── docs/                  # Documentation
-└── logs/                  # Log files
+│   ├── tools/               # CLI tools for standalone processing
+│   ├── tests/               # Unit and integration tests
+│   └── migrations/          # Database migration scripts
+├── frontend/                # React frontend application
+│   ├── src/                 # Frontend source code
+│   │   ├── components/      # Reusable React components
+│   │   ├── pages/           # Page components
+│   │   └── services/        # API integration services
+│   └── public/              # Static assets
+├── data/                    # Input/output data
+├── docs/                    # Documentation
+└── logs/                    # Log files
 ```
 
 ---
@@ -191,8 +221,9 @@ tiqets-order-processor/
 
 ---
 
-  ## Resources
+## Resources
 - [Pandera Documentation](https://pandera.readthedocs.io/)
 - [Marshmallow Documentation](https://marshmallow.readthedocs.io/)
 - [Alembic Documentation](https://alembic.sqlalchemy.org/)
 - [React Documentation](https://reactjs.org/)
+```
