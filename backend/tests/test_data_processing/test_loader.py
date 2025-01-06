@@ -1,11 +1,9 @@
-import os
 import tempfile
 from pathlib import Path
 
 import pandas as pd
 import pytest
 from src.data_processing.loader import DataLoader
-from src.utils.logger import setup_logger
 
 
 @pytest.fixture

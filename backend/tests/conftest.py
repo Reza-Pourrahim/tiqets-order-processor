@@ -1,4 +1,3 @@
-import os
 import tempfile
 from pathlib import Path
 
@@ -13,7 +12,7 @@ from sqlalchemy import text
 def app(tmp_path):
     """Create and configure a test Flask application."""
     # Get the project root directory
-    project_root = Path(__file__).resolve().parent.parent.parent
+    Path(__file__).resolve().parent.parent.parent
 
     class TestConfig:
         TESTING = True

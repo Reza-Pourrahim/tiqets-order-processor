@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import pandas as pd
-import pytest
 from src.data_processing.processor import OrderProcessor
 from src.utils.logger import setup_logger
 

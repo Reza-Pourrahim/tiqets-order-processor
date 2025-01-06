@@ -1,10 +1,7 @@
 import json
 
-import pandas as pd
 import pytest
-from app import db
 from app.api.routes import get_processed_data
-from app.models.models import Barcode, Customer, Order
 
 
 def test_process_orders_endpoint(client, sample_data, setup_test_data):

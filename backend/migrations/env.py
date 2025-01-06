@@ -9,7 +9,6 @@ config = context.config
 
 from app import db
 from app.core.config import Config
-from app.models.models import *
 
 # this is the Alembic Config object
 config = context.config

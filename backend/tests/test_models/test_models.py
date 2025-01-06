@@ -2,7 +2,6 @@ import pytest
 from app import db
 from app.models.models import Barcode, Customer, Order
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
 
 
 def test_customer_model(app):
