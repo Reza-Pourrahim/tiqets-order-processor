@@ -19,7 +19,7 @@ class OrderSchema(Schema):
 class CustomerOrderQuerySchema(Schema):
     """Schema for validating customer order query parameters"""
 
-    limit = fields.Int(validate=validate.Range(min=1, max=100), missing=5)
+    limit = fields.Int(validate=validate.Range(min=1, max=100), load_default=5)
 
 
 class TopCustomerSchema(Schema):
