@@ -1,7 +1,7 @@
 # Tiqets Order Processor
 
 ## Overview
-The Tiqets Order Processor is a production-ready backend system for managing customers, orders, and barcodes. It includes features for data processing, analytics, and API endpoints. This project is designed with scalability and reliability in mind, and includes thorough documentation, tests, and deployment instructions.
+The Tiqets Order Processor is a full-stack application for managing customers, orders, and barcodes. The backend provides robust data processing and analytics capabilities through RESTful APIs, while the frontend offers an intuitive dashboard for visualizing the data. This project is designed with scalability and reliability in mind, including thorough documentation, tests, and deployment instructions.
 
 ---
 
@@ -17,33 +17,30 @@ The Tiqets Order Processor is a production-ready backend system for managing cus
 
 ### Prerequisites
 - **Python 3.10 or later**
-- **Poetry** for dependency management
+- **Poetry** for backend dependency management
+- **Node.js 16 or later** for frontend development
 - **PostgreSQL** as the database
 
 ### Steps to Run Locally
+
+#### Backend Setup
 1. **Clone the Repository**:
    ```bash
    git clone <repository_url>
    cd tiqets-order-processor
    ```
 
-2. **Install Dependencies**:
+2. **Install Backend Dependencies**:
    ```bash
    poetry install
    ```
 
 3. **Set Environment Variables**:
    - Create a `.env` file from the provided example configuration:
-     - If `.env.example` exists in the project, copy it to `.env`:
-       ```bash
-       cp .env.example .env
-       ```
-     - If `.env.example` does not exist, create a new `.env` file manually:
-       ```bash
-       touch .env
-       ```
-
-   - Add the following environment variables to the `.env` file:
+     ```bash
+     cp .env.example .env
+     ```
+   - Add the following environment variables:
      ```env
      # Flask Configuration
      FLASK_APP=backend/wsgi.py
@@ -53,32 +50,39 @@ The Tiqets Order Processor is a production-ready backend system for managing cus
      DATABASE_URL=postgresql://admin:admin@localhost:5432/tiqets_db
      ```
 
-   - Update the `DATABASE_URL` to match your database credentials and server configuration if it differs.
-
 4. **Apply Database Migrations**:
    ```bash
    poetry run alembic upgrade head
    ```
 
-5. **Run the Application**:
+5. **Run the Backend**:
    ```bash
    poetry run flask run
    ```
 
-The application will be accessible at `http://localhost:5000`.
+#### Frontend Setup
+1. **Install Frontend Dependencies**:
+   ```bash
+   cd frontend
+   npm install
+   ```
+
+2. **Run the Frontend Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+The application will be accessible at:
+- Backend API: http://localhost:5000
+- Frontend Dashboard: http://localhost:5173
 
 ---
 
 ## Testing
-Run the tests to ensure everything is working:
+### Backend Tests
 ```bash
 poetry run pytest
 ```
-
----
-
-## Deployment
-Refer to the [Development and Deployment Instructions](docs/dev_and_deployment.md) for detailed deployment steps, including Docker setup.
 
 ---
 
@@ -88,10 +92,31 @@ tiqets-order-processor/
 ├── backend/                 # Main backend code
 │   ├── app/                 # Flask app
 │   ├── src/                 # Data processing logic
-│   ├── tests/               # Unit and integration tests
-│   └── migrations/          # Database migration scripts
-├── data/                    # Input/output data
-├── docs/                    # Documentation
-├── docker/                  # Docker configuration
-└── logs/                    # Log files
+│   ├── tests/              # Unit and integration tests
+│   └── migrations/         # Database migration scripts
+├── frontend/               # React frontend application
+│   ├── src/               # Frontend source code
+│   │   ├── components/    # Reusable React components
+│   │   ├── pages/        # Page components
+│   │   └── services/     # API integration services
+│   └── public/           # Static assets
+├── data/                  # Input/output data
+├── docs/                  # Documentation
+└── logs/                  # Log files
 ```
+
+---
+
+## Features
+- **Backend**
+  - RESTful API endpoints for data processing
+  - Robust data validation and error handling
+  - PostgreSQL database integration
+  - Comprehensive test coverage
+
+- **Frontend**
+  - Interactive dashboard for data visualization
+  - Real-time order processing display
+  - Top customers analytics
+  - Unused barcodes tracking
+  - Responsive design with Tailwind CSS
