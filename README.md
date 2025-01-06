@@ -33,11 +33,27 @@ The Tiqets Order Processor is a production-ready backend system for managing cus
    ```
 
 3. **Set Environment Variables**:
-   - Copy `.env.example` to `.env`:
-     ```bash
-     cp .env.example .env
+   - Create a `.env` file from the provided example configuration:
+     - If `.env.example` exists in the project, copy it to `.env`:
+       ```bash
+       cp .env.example .env
+       ```
+     - If `.env.example` does not exist, create a new `.env` file manually:
+       ```bash
+       touch .env
+       ```
+
+   - Add the following environment variables to the `.env` file:
+     ```env
+     # Flask Configuration
+     FLASK_APP=backend/wsgi.py
+     FLASK_ENV=development
+
+     # Database Configuration
+     DATABASE_URL=postgresql://admin:admin@localhost:5432/tiqets_db
      ```
-   - Update the `.env` file with your database configuration.
+
+   - Update the `DATABASE_URL` to match your database credentials and server configuration if it differs.
 
 4. **Apply Database Migrations**:
    ```bash
