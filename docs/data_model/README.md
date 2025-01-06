@@ -1,8 +1,3 @@
-Absolutely! Including indexing strategies in your documentation demonstrates thoughtful consideration of database performance and scalability. Here's the updated **`docs/data_model/README.md`** with the **Indexing Strategies** section included.
-
----
-
-```markdown
 # Data Model Documentation
 
 ## Overview

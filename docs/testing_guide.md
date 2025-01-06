@@ -107,7 +107,6 @@ Below are some of the critical test cases included in the suite:
 ## Notes
 1. Always run the tests in a controlled environment (e.g., a test database) to avoid data loss or corruption.
 2. Test data is loaded using fixtures in `conftest.py` to ensure consistency across test runs.
-3. For CI/CD pipelines, integrate the test suite to ensure code quality and prevent regressions.
 
 ---
 
