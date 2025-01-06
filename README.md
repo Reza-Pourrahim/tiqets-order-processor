@@ -10,6 +10,7 @@ The Tiqets Order Processor is a full-stack application for managing customers, o
 2. [API Endpoints](docs/api_endpoints.md)
 3. [Testing Guide](docs/testing_guide.md)
 4. [Development and Deployment Instructions](docs/dev_and_deployment.md)
+5. [Data Validation and Flow](#data-validation-and-flow)
 
 ---
 
@@ -78,6 +79,73 @@ The application will be accessible at:
 
 ---
 
+## Data Validation and Flow
+
+### **Data Validation**
+The Tiqets Order Processor employs a two-layer validation system to ensure data integrity and reliability:
+1. **Pandera**: Used for validating raw CSV input files (e.g., orders, barcodes). It ensures:
+   - Strong type checking for DataFrame columns.
+   - Custom validation rules (e.g., ensuring unique barcodes).
+   - Clear error messages to identify problematic data rows.
+   
+   **Why Pandera?**
+   I chose Pandera because it's specifically designed for DataFrame validation. It provides strong type checking, custom validation rules, and clear error messages—crucial for maintaining data integrity in our ticketing system.
+
+2. **Marshmallow**: Used for API-level validation. Marshmallow ensures:
+   - Validity of incoming API request data (e.g., JSON payloads).
+   - Serialization and deserialization of Python objects.
+   - Schema-based validation for a consistent API contract.
+
+---
+
+### **Data Flow**
+The data flow within the Tiqets Order Processor is as follows:
+1. **Input Data**:
+   - CSV files containing orders and barcodes are uploaded to the system.
+   - These files are validated using Pandera before being processed.
+
+2. **Data Processing**:
+   - Validated data is merged and transformed using Pandas.
+   - Analytics are generated, including:
+     - Top customers by ticket count.
+     - Unused barcodes in the system.
+
+3. **Database Storage**:
+   - Processed data is saved into the PostgreSQL database.
+   - Alembic manages schema migrations to ensure the database structure evolves with the application.
+
+4. **API Interaction**:
+   - The backend provides RESTful API endpoints for:
+     - Fetching processed orders.
+     - Viewing analytics like top customers and unused barcodes.
+     - Querying customer-specific data.
+
+5. **Frontend Display**:
+   - Data is visualized through a React-based dashboard, providing real-time insights into the system.
+
+---
+
+### **API Flow**
+The API flow ensures seamless communication between the frontend and backend:
+1. **Frontend Requests**:
+   - The React frontend uses Axios to send HTTP requests to the Flask backend.
+
+2. **Backend Processing**:
+   - The backend validates incoming requests using Marshmallow.
+   - Processes the requested data or analytics using Pandas and SQLAlchemy.
+   - Returns structured JSON responses to the frontend.
+
+3. **Error Handling**:
+   - Errors are handled gracefully with clear messages and HTTP status codes:
+     - `400 Bad Request` for invalid input data.
+     - `404 Not Found` for missing resources.
+     - `500 Internal Server Error` for unexpected issues.
+
+4. **Frontend Updates**:
+   - The React frontend dynamically updates its dashboard based on the backend’s responses.
+
+---
+
 ## Testing
 ### Backend Tests
 ```bash
@@ -109,14 +177,22 @@ tiqets-order-processor/
 
 ## Features
 - **Backend**
-  - RESTful API endpoints for data processing
-  - Robust data validation and error handling
-  - PostgreSQL database integration
-  - Comprehensive test coverage
+  - RESTful API endpoints for data processing.
+  - Robust data validation and error handling using Pandera and Marshmallow.
+  - PostgreSQL database integration with Alembic migrations.
+  - Comprehensive test coverage.
 
 - **Frontend**
-  - Interactive dashboard for data visualization
-  - Real-time order processing display
-  - Top customers analytics
-  - Unused barcodes tracking
-  - Responsive design with Tailwind CSS
+  - Interactive dashboard for data visualization.
+  - Real-time order processing display.
+  - Top customers analytics.
+  - Unused barcodes tracking.
+  - Responsive design with Tailwind CSS.
+
+---
+
+  ## Resources
+- [Pandera Documentation](https://pandera.readthedocs.io/)
+- [Marshmallow Documentation](https://marshmallow.readthedocs.io/)
+- [Alembic Documentation](https://alembic.sqlalchemy.org/)
+- [React Documentation](https://reactjs.org/)
