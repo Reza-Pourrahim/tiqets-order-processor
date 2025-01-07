@@ -148,6 +148,7 @@ def process_orders():
                 },
             },
         }
+        print(f"response process: {response}")
 
         return jsonify(response), HTTPStatus.OK
 
@@ -199,7 +200,7 @@ def get_top_customers():
                 for cust_id, count in top_customers
             ]
         )
-
+        print(f"response get_top_customers: {result}")
         return jsonify({"status": "success", "data": result}), HTTPStatus.OK
 
     except ValidationError as err:
@@ -255,6 +256,7 @@ def get_unused_barcodes():
 
         # Validate and serialize with schema
         result = unused_barcode_schema.dump(data)
+        print(f"response unused_barcode: {result}")
 
         return jsonify({"status": "success", "data": result}), HTTPStatus.OK
 

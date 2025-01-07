@@ -16,7 +16,7 @@ This document provides detailed information about the REST API endpoints availab
 ## 1. Process Orders
 - **Endpoint**: `/api/process`
 - **Method**: `GET`
-- **Description**: Processes the order and barcode data and returns results with processed orders and analytics.
+- **Description**: Processes the order and barcode data, saves the results to the database, and returns processed orders and analytics.
 - **Response**:
     ```json
     {
@@ -24,24 +24,24 @@ This document provides detailed information about the REST API endpoints availab
         "data": {
             "orders": [
                 {
-                    "customer_id": 1,
-                    "order_id": 101,
-                    "barcodes": [12345, 67890]
+                    "customer_id": 4,
+                    "order_id": 193,
+                    "barcodes": [11111111297, 11111111380, 11111111614]
                 }
             ],
             "analytics": {
                 "top_customers": [
                     {
-                        "customer_id": 1,
-                        "ticket_count": 5
+                        "customer_id": 10,
+                        "ticket_count": 23
                     }
                 ],
                 "unused_barcodes": {
-                    "count": 10,
+                    "count": 98,
                     "barcodes": [
                         {
-                            "barcode": 54321,
-                            "order_id": null
+                            "barcode": 11111111635,
+                            "order_id": None
                         }
                     ]
                 }
@@ -66,18 +66,18 @@ This document provides detailed information about the REST API endpoints availab
         "status": "success",
         "data": [
             {
-                "customer_id": 1,
-                "ticket_count": 10
+                "customer_id": 10,
+                "ticket_count": 23
             },
             {
-                "customer_id": 2,
-                "ticket_count": 8
+                "customer_id": 56,
+                "ticket_count": 20
             }
         ]
     }
     ```
 - **Error Responses**:
-    - `400 Bad Request`: If an invalid query parameter is provided.
+    - `400 Bad Request`: Invalid query parameter.
     - `500 Internal Server Error`: If the operation fails.
 
 ---
@@ -91,15 +91,15 @@ This document provides detailed information about the REST API endpoints availab
     {
         "status": "success",
         "data": {
-            "count": 3,
+            "count": 98,
             "barcodes": [
                 {
-                    "barcode": 54321,
-                    "order_id": null
+                    "barcode": 11111111635,
+                    "order_id": None
                 },
                 {
-                    "barcode": 67890,
-                    "order_id": null
+                    "barcode": 11111111636,
+                    "order_id": None
                 }
             ]
         }
@@ -122,18 +122,20 @@ This document provides detailed information about the REST API endpoints availab
         "status": "success",
         "data": [
             {
-                "order_id": 101,
-                "barcodes": [12345, 67890]
+                "customer_id": 10,
+                "order_id": 1,
+                "barcodes": [11111111111, 11111111318, 11111111428]
             },
             {
-                "order_id": 102,
-                "barcodes": [54321]
+                "customer_id": 10,
+                "order_id": 139,
+                "barcodes": [11111111248, 11111111565]
             }
         ]
     }
     ```
 - **Error Responses**:
-    - `404 Not Found`: If no orders are found for the given customer.
+    - `404 Not Found`: No orders found for the customer.
     - `500 Internal Server Error`: If the operation fails.
 
 ---
@@ -153,4 +155,4 @@ All error responses follow this standard format:
 - All endpoints return JSON responses.
 - The API adheres to RESTful design principles for ease of integration.
 - Authentication is currently not implemented but can be added later if required.
-```
+
