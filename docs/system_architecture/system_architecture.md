@@ -4,6 +4,7 @@
 
 This document provides an overview of the system architecture for the Tiqets Order Processor. The architecture is designed to support efficient data processing, robust API functionality, and a scalable frontend for user interactions.
 The architecture is designed with modularity in mind, allowing individual components to be developed, tested, and deployed independently.
+
 ---
 
 ## Architecture Diagram
