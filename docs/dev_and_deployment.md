@@ -80,7 +80,7 @@ After starting the services, the application will be available at:
    curl http://localhost:5000/api/barcodes/unused
    
    # Get orders for a specific customer (replace 101 with customer ID)
-   curl http://localhost:5000/api/orders/101
+   curl http://localhost:5000/api/orders/10
 
 ## Common Operations
 
