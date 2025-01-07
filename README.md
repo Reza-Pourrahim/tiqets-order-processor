@@ -54,7 +54,7 @@ The Tiqets Order Processor is a full-stack application for managing customers, o
 
 4. **Apply Database Migrations**:
    ```bash
-   poetry run alembic upgrade head
+   poetry run alembic -c backend/alembic.ini upgrade head
    ```
 
 5. **Run the Backend**:
@@ -226,4 +226,3 @@ tiqets-order-processor/
 - [Marshmallow Documentation](https://marshmallow.readthedocs.io/)
 - [Alembic Documentation](https://alembic.sqlalchemy.org/)
 - [React Documentation](https://reactjs.org/)
-```
