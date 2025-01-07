@@ -5,7 +5,14 @@ from typing import List, Tuple
 import pandas as pd
 from app import db
 from app.models.models import Barcode, Customer, Order
+from sqlalchemy.exc import SQLAlchemyError
 
+from ..exceptions import (
+    DatabaseError,
+    DataProcessingError,
+    DataValidationError,
+    FileOperationError,
+)
 from .loader import DataLoader
 
 
@@ -39,37 +46,33 @@ class OrderProcessor:
                 - barcode: List of barcodes for the order
 
         Raises:
-            FileNotFoundError: If input files not found
-            ValidationError: If data validation fails
-            Exception: For other processing errors
+            FileOperationError: If input files not found or file operations fail
+            DataValidationError: If data validation fails
+            DataProcessingError: For processing errors
         """
         try:
             self.logger.info("Loading data files...")
             orders_df = self.loader.load_orders()
             barcodes_df = self.loader.load_barcodes()
 
-            # Add validation
             if orders_df.empty or barcodes_df.empty:
-                raise ValueError("Empty input data")
+                raise DataValidationError("Empty input data")
 
             valid_orders_df = self._validate_orders_barcodes(orders_df, barcodes_df)
             result = self._merge_orders_barcodes(valid_orders_df, barcodes_df)
 
-            # Validate result
             if result.empty:
-                raise ValueError("No valid orders found after processing")
+                raise DataValidationError("No valid orders found after processing")
 
             return result
 
         except FileNotFoundError as e:
-            self.logger.error(f"Input file not found: {str(e)}")
-            raise
-        except ValueError as e:
+            raise FileOperationError(f"Input file not found: {str(e)}")
+        except DataValidationError as e:
             self.logger.error(f"Validation error: {str(e)}")
             raise
         except Exception as e:
-            self.logger.error(f"Error processing data: {str(e)}")
-            raise
+            raise DataProcessingError(f"Error processing data: {str(e)}")
 
     def _validate_orders_barcodes(
         self, orders_df: pd.DataFrame, barcodes_df: pd.DataFrame
@@ -82,22 +85,29 @@ class OrderProcessor:
 
         Returns:
             pd.DataFrame: Valid orders data with invalid orders removed
-        """
-        # Retrieves the order_ids that have at least one barcode.
-        orders_with_barcodes = barcodes_df["order_id"].unique()
-        orders_without_barcodes = orders_df[
-            ~orders_df["order_id"].isin(orders_with_barcodes)
-        ]
 
-        if not orders_without_barcodes.empty:
-            self.logger.error(
-                f"Found {len(orders_without_barcodes)} orders without barcodes: "
-                f"{orders_without_barcodes['order_id'].tolist()}"
-            )
-            return orders_df[
-                ~orders_df["order_id"].isin(orders_without_barcodes["order_id"])
+        Raises:
+            DataValidationError: If validation fails
+        """
+        try:
+            orders_with_barcodes = barcodes_df["order_id"].unique()
+            orders_without_barcodes = orders_df[
+                ~orders_df["order_id"].isin(orders_with_barcodes)
             ]
-        return orders_df
+
+            if not orders_without_barcodes.empty:
+                invalid_orders = orders_without_barcodes["order_id"].tolist()
+                self.logger.error(
+                    f"Found {len(orders_without_barcodes)} orders without barcodes: "
+                    f"{invalid_orders}"
+                )
+                return orders_df[
+                    ~orders_df["order_id"].isin(orders_without_barcodes["order_id"])
+                ]
+            return orders_df
+
+        except Exception as e:
+            raise DataValidationError(f"Error validating orders and barcodes: {str(e)}")
 
     def _merge_orders_barcodes(
         self, orders_df: pd.DataFrame, barcodes_df: pd.DataFrame
@@ -110,6 +120,9 @@ class OrderProcessor:
 
         Returns:
             pd.DataFrame: Merged data sorted by customer_id and order_id
+
+        Raises:
+            DataProcessingError: If merging fails
         """
         try:
             barcodes_grouped = (
@@ -118,8 +131,7 @@ class OrderProcessor:
             result = orders_df.merge(barcodes_grouped, on="order_id", how="inner")
             return result.sort_values(["customer_id", "order_id"])
         except Exception as e:
-            self.logger.error(f"Error merging orders and barcodes: {str(e)}")
-            raise
+            raise DataProcessingError(f"Error merging orders and barcodes: {str(e)}")
 
     def get_top_customers(
         self, df: pd.DataFrame, limit: int = 5
@@ -132,6 +144,9 @@ class OrderProcessor:
 
         Returns:
             List[Tuple[int, int]]: List of (customer_id, ticket_count) tuples
+
+        Raises:
+            DataProcessingError: If calculation fails
         """
         try:
             self.logger.info(f"Calculating top {limit} customers...")
@@ -140,8 +155,7 @@ class OrderProcessor:
             )
             return list(customer_tickets.items())
         except Exception as e:
-            self.logger.error(f"Error calculating top customers: {str(e)}")
-            raise
+            raise DataProcessingError(f"Error calculating top customers: {str(e)}")
 
     def get_unused_barcodes(self, df: pd.DataFrame) -> Tuple[int, pd.DataFrame]:
         """Get count and details of unused barcodes.
@@ -153,15 +167,14 @@ class OrderProcessor:
             Tuple[int, pd.DataFrame]: Count of unused barcodes and their details
 
         Raises:
-            Exception: If error occurs while processing barcodes
+            DataProcessingError: If processing fails
         """
         try:
             barcodes_df = self.loader.load_barcodes()
             unused_barcodes = barcodes_df[barcodes_df["order_id"].isna()]
             return unused_barcodes.shape[0], unused_barcodes
         except Exception as e:
-            self.logger.error(f"Error processing unused barcodes: {str(e)}")
-            raise
+            raise DataProcessingError(f"Error processing unused barcodes: {str(e)}")
 
     def save_results(self, df: pd.DataFrame) -> None:
         """Save processed orders to CSV.
@@ -170,7 +183,7 @@ class OrderProcessor:
             df (pd.DataFrame): Processed data to save
 
         Raises:
-            Exception: If saving fails
+            FileOperationError: If saving fails
         """
         try:
             self.logger.info("Saving processed data...")
@@ -179,43 +192,53 @@ class OrderProcessor:
             output_df.to_csv(output_path, index=False)
             self.logger.info(f"Results saved to {output_path}")
         except Exception as e:
-            self.logger.error(f"Error saving results: {str(e)}")
-            raise
+            raise FileOperationError(f"Error saving results to CSV: {str(e)}")
 
     def save_to_database(self, result_df: pd.DataFrame) -> None:
+        """Save processed results to database.
+
+        Args:
+            result_df (pd.DataFrame): Processed data to save
+
+        Raises:
+            DatabaseError: If database operations fail
+        """
         try:
             self.logger.info("Saving data to database...")
-            for _, row in result_df.iterrows():
-                # Check if customer exists
-                customer = Customer.query.get(row["customer_id"])
-                if not customer:
-                    customer = Customer(id=row["customer_id"])
-                    db.session.add(customer)
 
-                # Create order
-                order = Order(customer_id=customer.id)
-                db.session.add(order)
+            # Use transaction for atomic operations
+            with db.session.begin():
+                for _, row in result_df.iterrows():
+                    # Check if customer exists
+                    customer = Customer.query.get(row["customer_id"])
+                    if not customer:
+                        customer = Customer(id=row["customer_id"])
+                        db.session.add(customer)
 
-                # Create barcodes - check for existing ones
-                for barcode_value in row["barcode"]:
-                    # Check if barcode already exists
-                    existing_barcode = Barcode.query.filter_by(
-                        barcode_value=str(barcode_value)
-                    ).first()
+                    # Create order
+                    order = Order(customer_id=customer.id)
+                    db.session.add(order)
 
-                    if not existing_barcode:
-                        barcode = Barcode(
-                            barcode_value=str(barcode_value), order_id=order.id
-                        )
-                        db.session.add(barcode)
-                    else:
-                        self.logger.warning(
-                            f"Barcode {barcode_value} already exists, skipping..."
-                        )
+                    # Flush to get order ID
+                    db.session.flush()
 
-                db.session.commit()
+                    # Create barcodes
+                    for barcode_value in row["barcode"]:
+                        existing_barcode = Barcode.query.filter_by(
+                            barcode_value=str(barcode_value)
+                        ).first()
 
+                        if not existing_barcode:
+                            barcode = Barcode(
+                                barcode_value=str(barcode_value), order_id=order.id
+                            )
+                            db.session.add(barcode)
+                        else:
+                            self.logger.warning(
+                                f"Barcode {barcode_value} already exists, skipping..."
+                            )
+
+        except SQLAlchemyError as e:
+            raise DatabaseError(f"Database operation failed: {str(e)}")
         except Exception as e:
-            db.session.rollback()
-            self.logger.error(f"Error saving to database: {str(e)}")
-            raise
+            raise DatabaseError(f"Unexpected error during database operation: {str(e)}")
