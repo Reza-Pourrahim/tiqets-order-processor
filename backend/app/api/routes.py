@@ -59,6 +59,12 @@ def get_processed_data(input_dir: str, output_dir: str):
     return processor.process()
 
 
+@bp.route("/", methods=["GET"])
+def index():
+    """Default route to verify the API is running."""
+    return {"message": "Welcome to the Tiqets Order Processor API!"}, 200
+
+
 @bp.route("/process", methods=["GET"])
 def process_orders():
     """Process order and barcode data and return comprehensive results.
