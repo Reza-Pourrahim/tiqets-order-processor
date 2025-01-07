@@ -54,7 +54,7 @@ jobs:
 
     - name: Run migrations
       run: |
-        poetry run alembic upgrade head
+        poetry run alembic -c backend/alembic.ini upgrade head
 
     - name: Run tests with coverage
       run: |
