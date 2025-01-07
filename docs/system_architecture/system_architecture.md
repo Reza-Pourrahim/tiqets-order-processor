@@ -3,7 +3,7 @@
 ## Overview
 
 This document provides an overview of the system architecture for the Tiqets Order Processor. The architecture is designed to support efficient data processing, robust API functionality, and a scalable frontend for user interactions.
-
+The architecture is designed with modularity in mind, allowing individual components to be developed, tested, and deployed independently.
 ---
 
 ## Architecture Diagram
@@ -65,19 +65,4 @@ Below is the diagram illustrating the key components of the Tiqets Order Process
 3. **Processing**: Data is merged and transformed by the backend logic.
 4. **Storage**: Processed data is saved to the database or output files.
 5. **Visualization**: Results are fetched via API endpoints and displayed in the frontend dashboard.
-
----
-
-## How to Use the Diagram
-
-1. **Location**: The system architecture diagram is located in the `docs/` folder as `system_architecture.png`.
-2. **Viewing**: Open the PNG file with any image viewer or embed it in documentation tools.
-3. **Updates**: To modify or update the diagram, use the accompanying `system_architecture.drawio` file.
-
----
-
-## Additional Notes
-
-- The architecture is designed with modularity in mind, allowing individual components to be developed, tested, and deployed independently.
-- Ensure the Docker environment is configured correctly to maintain consistency between development and production environments.
 
