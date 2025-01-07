@@ -4,10 +4,7 @@ version = "0.1.0"
 description = "Order Processing API for Tiqets Ticketing System"
 authors = ["reza.prh <rezaprh.pourrahim@gmail.com>"]
 readme = "README.md"
-packages = [
-    {include = "backend/app"},
-    {include = "backend/src"},
-]
+packages = [{include = "backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
