@@ -104,39 +104,6 @@ If you prefer to run services locally without Docker:
    npm run dev
    ```
 
-## Project Structure
-```bash
-tiqets-order-processor/
-├── backend/                 # Main backend code
-│   ├── app/                # Flask app
-│   │   ├── api/           # API routes and error handlers
-│   │   ├── core/          # Core configurations
-│   │   ├── models/        # Database models
-│   │   └── schemas/       # Validation schemas
-│   ├── src/               # Data processing logic
-│   │   ├── data_processing/# Data loader and processor
-│   │   └── utils/         # Utilities and logging
-│   ├── tools/             # CLI tools
-│   ├── tests/             # Test suites
-│   ├── migrations/        # Database migrations
-│   └── alembic.ini        # Migration configuration
-├── frontend/              # React frontend application
-│   ├── src/               
-│   │   ├── components/    # React components
-│   │   ├── pages/        # Page components
-│   │   └── services/     # API integration
-│   └── vite.config.js    # Vite configuration
-├── docker/                # Docker configuration
-│   ├── backend/          # Backend Dockerfile
-│   └── frontend/         # Frontend Dockerfile
-├── data/                 # Data files
-│   ├── input/           # Input CSV files
-│   └── output/          # Processed results
-├── docs/                 # Documentation
-├── docker-compose.yml    # Service orchestration
-├── Justfile             # Task runner
-└── .env.example         # Environment template
-```
 
 ## Features
 
@@ -181,6 +148,7 @@ Detailed documentation is available in the `docs/` directory:
 - [API Endpoints](docs/api_endpoints.md)
 - [Testing Guide](docs/testing_guide.md)
 - [Development and Deployment](docs/dev_and_deployment.md)
+- [CI/CD Pipeline](docs/ci_cd.md)
 
 ## CLI Tool
 
@@ -242,6 +210,96 @@ poetry run pytest
 # Run with coverage
 poetry run pytest --cov=backend
 ```
+
+## Project Structure
+
+The Tiqets Order Processor follows a well-organized structure that separates concerns and promotes maintainability. Here's a detailed breakdown of the project's architecture:
+
+```bash
+tiqets-order-processor/
+├── .github/                    # GitHub specific configurations
+│   └── workflows/             # GitHub Actions CI/CD workflows
+│       ├── ci.yml             # Main CI pipeline configuration
+│       ├── deployment.yml     # Deployment workflow configuration
+│       └── release.yml        # Release management workflow
+│
+├── backend/                    # Main backend application code
+│   ├── app/                   # Flask application
+│   │   ├── api/              # API routes and error handlers
+│   │   ├── core/             # Core configurations
+│   │   ├── models/           # Database models
+│   │   └── schemas/          # Validation schemas
+│   ├── src/                  # Core business logic
+│   │   ├── data_processing/  # Data processing modules
+│   │   │   ├── loader.py     # Data loading functionality
+│   │   │   ├── processor.py  # Data processing logic
+│   │   │   └── validator.py  # Data validation rules
+│   │   └── utils/           # Utility functions
+│   │       └── logger.py     # Logging configuration
+│   ├── tools/               # CLI tools and scripts
+│   │   └── main.py          # Command-line interface
+│   ├── tests/               # Test suites
+│   │   ├── test_api/        # API endpoint tests
+│   │   ├── test_models/     # Database model tests
+│   │   ├── test_data_processing/     # Data processing modules tests
+│   │   └── conftest.py      # Test configurations
+│   ├── migrations/          # Database migrations
+│   │   └── versions/        # Migration version files
+│   └── alembic.ini          # Migration configuration
+│
+├── frontend/                  # React frontend application
+│   ├── src/                  # Frontend source code
+│   │   ├── components/       # Reusable React components
+│   │   ├── pages/           # Page-level components
+│   │   └── services/        # API integration services
+│   ├── public/              # Static assets
+│   ├── index.html           # Root HTML template
+│   ├── package.json         # Frontend dependencies
+│   └── vite.config.js       # Vite configuration
+│
+├── docker/                    # Docker configuration
+│   ├── backend/              # Backend container setup
+│   │   └── Dockerfile       # Backend image definition
+│   └── frontend/            # Frontend container setup
+│       └── Dockerfile       # Frontend image definition
+│
+├── data/                      # Data directory
+│   ├── input/               # Input CSV files
+│   │   ├── orders.csv      # Order data
+│   │   └── barcodes.csv    # Barcode data
+│   └── output/              # Processed results
+│
+├── docs/                      # Project documentation
+│   ├── api_endpoints.md     # API documentation
+│   ├── ci_cd.md            # CI/CD pipeline details
+│   ├── data_model/         # Data model documentation
+│   ├── dev_and_deployment.md # Development guide
+│   ├── system_architecture/ # System architecture docs
+│   └── testing_guide.md    # Testing documentation
+│
+├── docker-compose.yml         # Service orchestration
+├── Justfile                   # Task runner commands
+├── pyproject.toml            # Python dependencies
+├── README.md                 # Project documentation
+└── .env.example              # Environment template
+```
+
+This structure follows several key organizational principles:
+
+1. **Separation of Concerns**: Backend and frontend code are clearly separated, each with their own configuration and dependencies.
+
+2. **Modular Architecture**: The backend is organized into distinct modules (api, core, models, schemas) for better maintainability.
+
+3. **Configuration Management**: Environment variables, Docker configurations, and CI/CD workflows are organized in dedicated directories.
+
+4. **Documentation**: Comprehensive documentation is maintained in the `docs` directory, covering all aspects of the project.
+
+5. **Testing**: Test files are colocated with the code they test, making it easier to maintain and update tests alongside features.
+
+6. **Infrastructure as Code**: Docker configurations and CI/CD workflows are version controlled, ensuring consistent environments.
+
+Each directory serves a specific purpose and contains related files, making the project easy to navigate and maintain. The structure supports both development and production workflows, with clear separation between application code, configuration, and documentation.
+
 
 ## Troubleshooting
 
