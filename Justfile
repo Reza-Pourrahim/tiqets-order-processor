@@ -96,3 +96,18 @@ migrations-history:
 # Create a new migration
 new-migration name:
     docker-compose run backend alembic -c backend/alembic.ini revision --autogenerate -m "{{name}}"
+
+
+# CI specific commands
+ci-test:
+    poetry run pytest --cov=backend --cov-report=xml
+
+ci-lint:
+    poetry run flake8 backend
+    poetry run black --check backend
+
+ci-build:
+    docker-compose build
+
+ci-migrate:
+    poetry run alembic upgrade head
