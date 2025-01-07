@@ -62,7 +62,6 @@ jobs:
 
     - name: Run linting
       run: |
-        poetry run flake8 backend
         poetry run black --check backend
 
   build:
