@@ -1,0 +1,49 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:132.0) Gecko/20100101 Firefox/132.0" version="26.0.4">
+  <diagram name="Enhanced System Architecture" id="YsSMGcGzZOSz9_RXEwwN">
+    <mxGraphModel dx="1167" dy="646" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-3" value="Backend (Flask)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9edf7;strokeColor=#31708f;" vertex="1" parent="1">
+          <mxGeometry x="150" y="100" width="200" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-4" value="API Routes&lt;br&gt;Core Configurations&lt;br&gt;Models&lt;br&gt;Schemas&lt;br&gt;Data Processing" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="EQT4Y68SV5UAMcQ8yHwD-3">
+          <mxGeometry x="20" y="10" width="160" height="260" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-5" value="Frontend (React)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dff0d8;strokeColor=#3c763d;" vertex="1" parent="1">
+          <mxGeometry x="150" y="500" width="200" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-6" value="Components&lt;br&gt;Pages&lt;br&gt;API Services" style="text;whiteSpace=wrap;html=1;" vertex="1" parent="EQT4Y68SV5UAMcQ8yHwD-5">
+          <mxGeometry x="20" y="10" width="160" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-7" value="Database (PostgreSQL)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f2dede;strokeColor=#a94442;" vertex="1" parent="1">
+          <mxGeometry x="500" y="250" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-8" value="Data Storage (Input/Output)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fcf8e3;strokeColor=#8a6d3b;" vertex="1" parent="1">
+          <mxGeometry x="500" y="120" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-9" value="Docker Orchestration" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="440" y="430" width="150" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-10" style="edgeStyle=elbowEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#000000;" edge="1" parent="1" source="EQT4Y68SV5UAMcQ8yHwD-3" target="EQT4Y68SV5UAMcQ8yHwD-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-11" style="edgeStyle=elbowEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#000000;" edge="1" parent="1" source="EQT4Y68SV5UAMcQ8yHwD-3" target="EQT4Y68SV5UAMcQ8yHwD-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-12" style="edgeStyle=elbowEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#000000;" edge="1" parent="1" source="EQT4Y68SV5UAMcQ8yHwD-5" target="EQT4Y68SV5UAMcQ8yHwD-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-13" style="edgeStyle=elbowEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#000000;" edge="1" parent="1" source="EQT4Y68SV5UAMcQ8yHwD-9" target="EQT4Y68SV5UAMcQ8yHwD-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-14" style="edgeStyle=elbowEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#000000;" edge="1" parent="1" source="EQT4Y68SV5UAMcQ8yHwD-9" target="EQT4Y68SV5UAMcQ8yHwD-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EQT4Y68SV5UAMcQ8yHwD-15" style="edgeStyle=elbowEdgeStyle;rounded=1;orthogonalLoop=1;strokeColor=#000000;" edge="1" parent="1" source="EQT4Y68SV5UAMcQ8yHwD-9" target="EQT4Y68SV5UAMcQ8yHwD-7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -176,6 +176,7 @@ tiqets-order-processor/
 
 ## Documentation
 Detailed documentation is available in the `docs/` directory:
+- [System Architecture](docs/system_architecture/system_architecture.md)
 - [Data Model](docs/data_model/README.md)
 - [API Endpoints](docs/api_endpoints.md)
 - [Testing Guide](docs/testing_guide.md)
