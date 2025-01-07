@@ -1,4 +1,11 @@
 # Tiqets Order Processor
+## Live Demo
+The application is live and accessible at: [http://49.13.239.138:5173/](http://49.13.239.138:5173/)
+
+### Environment Overview
+- **Frontend URL**: [http://49.13.239.138:5173](http://49.13.239.138:5173)
+- **Backend API URL**: [http://49.13.239.138:5000/api](http://49.13.239.138:5000/api)
+- **Database**: PostgreSQL 15
 
 ## Overview
 The Tiqets Order Processor is a full-stack application for managing customers, orders, and barcodes. The backend provides robust data processing and analytics capabilities through RESTful APIs, while the frontend offers an intuitive dashboard for visualizing the data. This project is designed with scalability and reliability in mind, including thorough documentation, tests, and deployment instructions.
@@ -148,7 +155,7 @@ Detailed documentation is available in the `docs/` directory:
 - [API Endpoints](docs/api_endpoints.md)
 - [Testing Guide](docs/testing_guide.md)
 - [Development and Deployment](docs/dev_and_deployment.md)
-- [CI/CD Pipeline](docs/ci_cd.md)
+- [CI/CD Pipeline](docs/ci_cd/ci_cd.md)
 
 ## CLI Tool
 
@@ -271,7 +278,7 @@ tiqets-order-processor/
 │
 ├── docs/                      # Project documentation
 │   ├── api_endpoints.md     # API documentation
-│   ├── ci_cd.md            # CI/CD pipeline details
+│   ├── ci_cd/            # CI/CD pipeline details
 │   ├── data_model/         # Data model documentation
 │   ├── dev_and_deployment.md # Development guide
 │   ├── system_architecture/ # System architecture docs
