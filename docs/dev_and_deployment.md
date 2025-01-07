@@ -39,14 +39,16 @@ cp .env.example .env
 Using Just (recommended):
 
 ```bash
-# Build all containers
-just setup
+# Complete setup with one command
+just setup-all   # Builds, starts DB, runs migrations, starts services
 
-# Start all services
-just start
-
-# Apply database migrations
-just migrate
+# Or step by step approach:
+just setup       # Build containers
+just start-db    # Start database and wait for initialization
+just migrate     # Run migrations
+just start       # Start services (interactive mode)
+# or
+just start-detached  # Start services in background
 ```
 
 Or using Docker Compose directly:
@@ -99,21 +101,40 @@ After starting the services, the application will be available at:
 
 ## Common Operations
 
-### Application Management
+### Available Just Commands
 
+#### Setup and Deployment
 ```bash
-just start          # Start all services
+just setup-all      # Complete setup process
+just setup          # Build containers
+just start-db       # Start database only
+just start          # Start all services (interactive)
+just start-detached # Start all services in background
 just stop           # Stop all services
-just restart        # Restart all services
-just logs           # View service logs
+just restart        # Restart services
 ```
 
-### Development Tasks
-
+#### Development
 ```bash
-just test           # Run backend tests
-just migrate        # Run database migrations
-just backup-db      # Create database backup
+just migrate        # Run migrations
+just test          # Run tests
+just logs          # View logs
+just backend-shell # Access backend shell
+just frontend-shell # Access frontend shell
+just db-shell      # Access database shell
+```
+
+#### Database Operations
+```bash
+just backup-db      # Backup database
+just migrations-history # View migrations history
+just new-migration name # Create new migration
+```
+
+#### Maintenance
+```bash
+just clean         # Remove all containers, volumes, and images
+just status        # Check container status
 ```
 
 ### Manual Docker Commands
@@ -176,9 +197,21 @@ docker-compose logs -f      # View logs
 
 ---
 
+
 ## Troubleshooting
 
-- If services don't start, check logs: `just logs`
-- If frontend can't connect to backend, verify API URL in `.env`
-- For database issues, ensure migrations are applied: `just migrate`
-
+- If services don't start: 
+  ```bash
+  just logs        # Check service logs
+  just status      # Check container status
+  ```
+- For database issues:
+  ```bash
+  just start-db    # Restart database
+  just migrate     # Rerun migrations
+  ```
+- For clean restart:
+  ```bash
+  just clean       # Remove everything
+  just setup-all   # Fresh setup
+  ```

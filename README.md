@@ -34,17 +34,23 @@ The Tiqets Order Processor is a full-stack application for managing customers, o
 
 3. **Build and Start Services**:
    ```bash
-   # Using Just (recommended)
-   just setup    # Build containers
-   just start    # Start services
-   just migrate  # Run migrations
+   # One command setup (recommended)
+   just setup-all    # Builds, starts DB, runs migrations, starts all services
+
+   # Or step by step:
+   just setup        # Build containers
+   just start-db     # Start database and wait for initialization
+   just migrate      # Run migrations
+   just start        # Start all services
    ```
 
    Or using Docker Compose directly:
    ```bash
    docker-compose build
-   docker-compose up -d
+   docker-compose up -d db
+   sleep 5
    docker-compose run backend alembic -c backend/alembic.ini upgrade head
+   docker-compose up -d
    ```
 
 4. **Access the Application**:
@@ -55,19 +61,32 @@ The Tiqets Order Processor is a full-stack application for managing customers, o
 
 If you prefer to run services locally without Docker:
 
-#### Backend Setup
-1. **Install Dependencies**:
+1. **Database Setup**:
+   ```bash
+   # If using local PostgreSQL
+   sudo -u postgres psql
+   postgres=# CREATE DATABASE tiqets_db;
+   postgres=# CREATE USER admin WITH PASSWORD 'admin';
+   postgres=# GRANT ALL PRIVILEGES ON DATABASE tiqets_db TO admin;
+   ```
+   
+   Or update your .env file if using Docker's PostgreSQL:
+   ```
+   DATABASE_URL=postgresql://admin:admin@localhost:5433/tiqets_db
+   ```
+
+2. **Install Dependencies**:
    ```bash
    poetry install
    ```
 
-2. **Set Environment Variables**:
+3. **Set Environment Variables**:
    ```bash
    cp .env.example .env
    # Update DATABASE_URL if needed
    ```
 
-3. **Run Migrations and Start Server**:
+4. **Run Migrations and Start Server**:
    ```bash
    poetry run alembic -c backend/alembic.ini upgrade head
    poetry run flask run
@@ -180,14 +199,31 @@ python backend/tools/main.py
 
 ### Using Just Task Runner
 ```bash
+# Setup and Deployment
+just setup-all      # Complete setup: build, start DB, migrate, start services
 just setup          # Build all containers
-just start          # Start all services
+just start-db       # Start only database
+just start          # Start all services (interactive)
+just start-detached # Start all services in background
 just stop           # Stop all services
 just restart        # Restart services
+
+# Development
 just migrate        # Run migrations
 just test          # Run tests
 just logs          # View logs
+just backend-shell # Access backend container shell
+just frontend-shell # Access frontend container shell
+just db-shell      # Access database shell
+
+# Database
 just backup-db      # Backup database
+just migrations-history # View migrations history
+just new-migration name # Create new migration
+
+# Maintenance
+just clean         # Remove all containers, volumes, and images
+just status        # Check container status
 ```
 
 ### Manual Docker Commands
@@ -205,6 +241,37 @@ poetry run pytest
 # Run with coverage
 poetry run pytest --cov=backend
 ```
+
+## Troubleshooting
+
+### Common Issues
+
+#### Port Conflicts
+If you see an error about port 5432 being in use:
+1. Either stop your local PostgreSQL service:
+   ```bash
+   sudo systemctl stop postgresql
+   ```
+2. Or use the alternative port (5433) configured in docker-compose.yml
+
+#### Database Connection Issues
+- For Docker: Make sure to start the database first: `just start-db`
+- For local development: Ensure PostgreSQL is running and the user has proper permissions
+- Check if migrations are applied: `just migrate`
+
+#### Container Issues
+- If containers fail to start:
+  ```bash
+  just logs        # Check service logs
+  just status      # Check container status
+  ```
+- For database connection errors, ensure the database is fully initialized
+- For a clean restart:
+  ```bash
+  just clean       # Remove everything
+  just setup-all   # Fresh setup
+  ```
+
 
 ## Resources
 - [Pandera Documentation](https://pandera.readthedocs.io/)
