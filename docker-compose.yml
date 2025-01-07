@@ -1,0 +1,40 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: tiqets_db
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/backend/Dockerfile
+    volumes:
+      - ./data:/app/data  # Mount data directory
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql://admin:admin@db:5432/tiqets_db
+    ports:
+      - "5000:5000"  # Expose Flask's default port
+
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/frontend/Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      # For container-to-container communication
+      - VITE_API_URL_DOCKER=http://backend:5000/api
+      # For browser access
+      - VITE_API_URL=http://localhost:5000/api
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
