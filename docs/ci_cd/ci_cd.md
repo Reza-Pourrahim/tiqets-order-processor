@@ -28,7 +28,6 @@ The following diagram illustrates the CI/CD pipeline's workflow, showing the tri
 ## CI Pipeline (ci.yml)
 
 ### Trigger Events
-- Push to `main` and `develop` branches
 - Pull requests to `main` and `develop`
 
 ### Jobs and Stages
