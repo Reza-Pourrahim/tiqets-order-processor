@@ -1,4 +1,7 @@
 # Tiqets Order Processor
+
+A full-stack application for managing ticket orders, providing robust data processing capabilities and real-time analytics visualization.
+
 ## Live Demo
 The application is live and accessible at: [http://49.13.239.138:5173/](http://49.13.239.138:5173/)
 
@@ -7,24 +10,37 @@ The application is live and accessible at: [http://49.13.239.138:5173/](http://4
 - **Backend API URL**: [http://49.13.239.138:5000/api](http://49.13.239.138:5000/api)
 - **Database**: PostgreSQL 15
 
+
 ## Overview
-The Tiqets Order Processor is a full-stack application for managing customers, orders, and barcodes. The backend provides robust data processing and analytics capabilities through RESTful APIs, while the frontend offers an intuitive dashboard for visualizing the data. This project is designed with scalability and reliability in mind, including thorough documentation, tests, and deployment instructions.
+The Tiqets Order Processor streamlines ticket management through:
+- Automated order processing and validation
+- Real-time analytics dashboard
+- RESTful API integration
+- Comprehensive data validation
+- Scalable architecture
 
 ## Table of Contents
-1. [Getting Started](#getting-started)
-2. [Project Structure](#project-structure)
+1. [Live Demo](#live-demo)
+2. [Getting Started](#getting-started)
 3. [Features](#features)
 4. [Data Validation and Flow](#data-validation-and-flow)
 5. [Documentation](#documentation)
 6. [CLI Tool](#cli-tool)
-7. [Resources](#resources)
+7. [Available Commands](#available-commands)
+8. [Testing](#testing)
+9. [Project Structure](#project-structure)
+10. [Troubleshooting](#troubleshooting)
+11. [Resources](#resources)
 
 ## Getting Started
-
 ### Prerequisites
 - Docker and Docker Compose
 - Just (Command Runner) - Optional but recommended
 - Git
+- For local development:
+  - Python 3.10 or higher
+  - Node.js 18 or higher
+  - PostgreSQL 15
 
 ### Quick Start with Docker (Recommended)
 
