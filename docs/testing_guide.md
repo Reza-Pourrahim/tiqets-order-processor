@@ -23,6 +23,10 @@ To execute the full test suite:
 ```bash
 poetry run pytest
 ```
+or
+```bash
+just test
+```
 
 ### Run Tests with Coverage Report
 To view the test coverage:
