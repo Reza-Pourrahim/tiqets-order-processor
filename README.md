@@ -2,15 +2,6 @@
 
 A full-stack application for managing ticket orders, providing robust data processing capabilities and real-time analytics visualization.
 
-## Live Demo
-The application is live and accessible at: [http://49.13.239.138:5173/](http://49.13.239.138:5173/)
-
-### Environment Overview
-- **Frontend URL**: [http://49.13.239.138:5173](http://49.13.239.138:5173)
-- **Backend API URL**: [http://49.13.239.138:5000/api](http://49.13.239.138:5000/api)
-- **Database**: PostgreSQL 15
-
-
 ## Overview
 The Tiqets Order Processor streamlines ticket management through:
 - Automated order processing and validation
@@ -20,17 +11,16 @@ The Tiqets Order Processor streamlines ticket management through:
 - Scalable architecture
 
 ## Table of Contents
-1. [Live Demo](#live-demo)
-2. [Getting Started](#getting-started)
-3. [Features](#features)
-4. [Data Validation and Flow](#data-validation-and-flow)
-5. [Documentation](#documentation)
-6. [CLI Tool](#cli-tool)
-7. [Available Commands](#available-commands)
-8. [Testing](#testing)
-9. [Project Structure](#project-structure)
-10. [Troubleshooting](#troubleshooting)
-11. [Resources](#resources)
+1. [Getting Started](#getting-started)
+2. [Features](#features)
+3. [Data Validation and Flow](#data-validation-and-flow)
+4. [Documentation](#documentation)
+5. [CLI Tool](#cli-tool)
+6. [Available Commands](#available-commands)
+7. [Testing](#testing)
+8. [Project Structure](#project-structure)
+9. [Troubleshooting](#troubleshooting)
+10. [Resources](#resources)
 
 ## Getting Started
 ### Prerequisites
